@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터의 종류 - 우리 교실 탐험</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cute Korean font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: #f0f9ff;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse-custom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .item-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .item-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+            z-index: 20;
+        }
+
+        .modal-enter {
+            animation: pulse-custom 0.3s ease-out forwards;
+        }
+
+        /* Classroom decor styles */
+        .wood-pattern {
+            background-color: #d4a373;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);
+        }
+        
+        .floor-pattern {
+            background-color: #fef3c7;
+            background-image: radial-gradient(#e2e8f0 15%, transparent 16%), radial-gradient(#e2e8f0 15%, transparent 16%);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 select-none">
+
+    <!-- Header -->
+    <header class="mb-6 text-center">
+        <h1 class="text-4xl md:text-5xl text-blue-600 mb-2 drop-shadow-md">데이터의 종류</h1>
+        <p class="text-gray-600 text-lg md:text-xl bg-white px-4 py-2 rounded-full shadow-sm inline-block">
+            🔍 교실 속 물건을 클릭해서 어떤 데이터인지 알아보세요!
+        </p>
+    </header>
+
+    <!-- Main Classroom Scene Container -->
+    <main class="relative w-full max-w-4xl aspect-[16/10] bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-yellow-200">
+        
+        <!-- Wall -->
+        <div class="absolute inset-0 bg-blue-50 h-3/4 w-full z-0"></div>
+        
+        <!-- Floor -->
+        <div class="absolute bottom-0 w-full h-1/4 floor-pattern z-0 border-t-4 border-gray-200"></div>
+
+        <!-- 1. Blackboard (Text Data) -->
+        <div class="absolute top-[10%] left-1/2 transform -translate-x-1/2 w-3/5 h-2/5 bg-green-800 rounded-xl border-8 border-yellow-700 shadow-lg flex flex-col items-center justify-center group z-0">
+            <span class="text-white/30 text-6xl font-serif absolute top-2 left-4">ABC</span>
+            <span class="text-white/30 text-4xl font-serif absolute bottom-4 right-4">가나다</span>
+            
+            <!-- Interactive Item -->
+            <button onclick="showInfo('text')" class="item-btn absolute bg-white/90 p-3 rounded-full hover:bg-white text-green-700 floating" style="top: 30%;">
+                <i data-lucide="type" class="w-8 h-8 md:w-10 md:h-10"></i>
+                <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">칠판 글씨</div>
+            </button>
+        </div>
+
+        <!-- 2. Ruler/Clock (Numerical Data) -->
+        <div class="absolute top-[10%] right-[5%] group z-10">
+            <button onclick="showInfo('number')" class="item-btn bg-yellow-100 border-4 border-yellow-400 p-3 rounded-full text-yellow-700">
+                <i data-lucide="ruler" class="w-8 h-8 md:w-10 md:h-10"></i>
+            </button>
+            <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">거리/숫자</div>
+        </div>
+
+        <!-- Teacher's Desk Area -->
+        <div class="absolute bottom-[10%] left-1/2 transform -translate-x-1/2 w-4/5 h-1/4 wood-pattern rounded-t-lg shadow-xl z-10 flex items-end justify-around pb-4 px-8 border-t-4 border-yellow-800">
+            
+            <!-- 3. Recorder (Sound Data) -->
+            <div class="relative group -mt-12">
+                <button onclick="showInfo('sound')" class="item-btn bg-red-100 border-4 border-red-400 p-3 rounded-full text-red-600 floating" style="animation-delay: 0.5s;">
+                    <i data-lucide="mic" class="w-8 h-8 md:w-10 md:h-10"></i>
+                </button>
+                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">녹음기</div>
+            </div>
+
+            <!-- 4. Camera (Image Data) -->
+            <div class="relative group -mt-8">
+                <button onclick="showInfo('image')" class="item-btn bg-indigo-100 border-4 border-indigo-400 p-3 rounded-full text-indigo-600">
+                    <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10"></i>
+                </button>
+                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">카메라</div>
+            </div>
+
+            <!-- 5. Tablet (Video Data) -->
+            <div class="relative group -mt-12">
+                <button onclick="showInfo('video')" class="item-btn bg-purple-100 border-4 border-purple-400 p-3 rounded-full text-purple-600 floating" style="animation-delay: 1s;">
+                    <i data-lucide="tablet" class="w-8 h-8 md:w-10 md:h-10"></i>
+                </button>
+                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">태블릿</div>
+            </div>
+
+            <!-- 6. Result Table (Table Data) -->
+            <div class="relative group -mt-8">
+                <button onclick="showInfo('table')" class="item-btn bg-emerald-100 border-4 border-emerald-400 p-3 rounded-full text-emerald-600">
+                    <i data-lucide="clipboard-list" class="w-8 h-8 md:w-10 md:h-10"></i>
+                </button>
+                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">기록 결과표</div>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <!-- Modal (Popup) -->
+    <div id="infoModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 text-center transform transition-all modal-enter relative overflow-hidden">
+            
+            <!-- Decorative Background Circle -->
+            <div id="modalBgCircle" class="absolute -top-20 -left-20 w-40 h-40 rounded-full opacity-20"></div>
+            <div id="modalBgCircle2" class="absolute -bottom-20 -right-20 w-40 h-40 rounded-full opacity-20"></div>
+
+            <!-- Content -->
+            <div class="relative z-10">
+                <div id="modalIcon" class="mx-auto w-20 h-20 flex items-center justify-center rounded-full mb-4 text-white shadow-lg text-4xl">
+                    <!-- Icon injected by JS -->
+                </div>
+                
+                <h2 id="modalTitle" class="text-3xl font-bold mb-2 text-gray-800">데이터 이름</h2>
+                <div class="bg-gray-100 rounded-xl p-4 mb-6">
+                    <p id="modalDesc" class="text-xl text-gray-700 leading-relaxed word-keep">설명이 여기에 나옵니다.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="text-sm text-gray-500 mb-2">💡 예시: <span id="modalExample" class="font-bold"></span></div>
+                    <button onclick="closeModal()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition transform hover:scale-105 shadow-md">
+                        확인했어요!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data & Logic -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Data Definition
+        const dataTypes = {
+            'text': {
+                title: '문자 데이터',
+                desc: '글자나 기호로 정보를 나타내요.',
+                example: '칠판 글씨, 책 내용, 문자 메시지',
+                icon: 'type',
+                colorClass: 'bg-green-500',
+                textClass: 'text-green-600'
+            },
+            'number': {
+                title: '숫자 데이터',
+                desc: '수나 양, 크기를 숫자로 나타내요.',
+                example: '거리, 키, 몸무게, 가격',
+                icon: 'ruler',
+                colorClass: 'bg-yellow-500',
+                textClass: 'text-yellow-600'
+            },
+            'sound': {
+                title: '소리 데이터',
+                desc: '귀로 들을 수 있는 소리를 담고 있어요.',
+                example: '녹음된 목소리, 음악, 알림음',
+                icon: 'mic',
+                colorClass: 'bg-red-500',
+                textClass: 'text-red-600'
+            },
+            'image': {
+                title: '이미지 데이터',
+                desc: '눈으로 보는 멈춰있는 그림이나 사진이에요.',
+                example: '사진, 그림, 포스터',
+                icon: 'camera',
+                colorClass: 'bg-indigo-500',
+                textClass: 'text-indigo-600'
+            },
+            'video': {
+                title: '영상 데이터',
+                desc: '시간에 따라 움직이는 화면과 소리예요.',
+                example: '유튜브 영상, TV 만화, 영화',
+                icon: 'film',
+                colorClass: 'bg-purple-500',
+                textClass: 'text-purple-600'
+            },
+            'table': {
+                title: '표 데이터',
+                desc: '정보를 알기 쉽게 칸에 정리한 것이에요.',
+                example: '성적표, 시간표, 급식표',
+                icon: 'table',
+                colorClass: 'bg-emerald-500',
+                textClass: 'text-emerald-600'
+            }
+        };
+
+        const modal = document.getElementById('infoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalExample = document.getElementById('modalExample');
+        const modalIconContainer = document.getElementById('modalIcon');
+        const modalBg1 = document.getElementById('modalBgCircle');
+        const modalBg2 = document.getElementById('modalBgCircle2');
+
+        function showInfo(type) {
+            const data = dataTypes[type];
+            
+            // Content Update
+            modalTitle.innerText = data.title;
+            modalTitle.className = `text-3xl font-bold mb-2 ${data.textClass}`;
+            modalDesc.innerText = data.desc;
+            modalExample.innerText = data.example;
+            
+            // Icon Update
+            modalIconContainer.className = `mx-auto w-24 h-24 flex items-center justify-center rounded-full mb-4 text-white shadow-lg ${data.colorClass}`;
+            modalIconContainer.innerHTML = `<i data-lucide="${data.icon}" class="w-12 h-12"></i>`;
+            
+            // Background decoration update
+            modalBg1.className = `absolute -top-20 -left-20 w-40 h-40 rounded-full opacity-20 ${data.colorClass}`;
+            modalBg2.className = `absolute -bottom-20 -right-20 w-40 h-40 rounded-full opacity-20 ${data.colorClass}`;
+
+            // Re-render icon
+            lucide.createIcons();
+            
+            // Show Modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
