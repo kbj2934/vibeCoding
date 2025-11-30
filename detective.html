@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>감정 탐정: 진짜 마음을 찾아라!</title>
+    <!-- 구글 폰트 (귀여운 느낌의 Jua체) -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 설정 */
+        :root {
+            --primary-color: #FF9A9E;
+            --secondary-color: #FECFEF;
+            --accent-color: #6A11CB;
+            --text-color: #555;
+            --bg-color: #Fdfbf7;
+        }
+
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--secondary-color);
+        }
+
+        h1 {
+            color: var(--accent-color);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px var(--secondary-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        /* 화면 전환을 위한 스타일 */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Jua', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* 시나리오 박스 */
+        .scenario-box {
+            background-color: #E3F2FD;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px dashed #90CAF9;
+        }
+
+        .scenario-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+
+        /* 답변 카드 스타일 */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border: 3px solid #eee;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-align: left;
+        }
+
+        .card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            background-color: #FFF0F5;
+        }
+
+        .card-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        /* 결과 화면 스타일 */
+        .result-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .badge-ai {
+            background-color: #E0E0E0;
+            color: #555;
+            border: 2px solid #999;
+        }
+
+        .badge-human {
+            background-color: #FFF9C4;
+            color: #F57F17;
+            border: 2px solid #FBC02D;
+        }
+
+        .explanation-box {
+            background-color: #F3E5F5;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .highlight {
+            color: #D32F2F;
+            background-color: rgba(255, 255, 0, 0.3);
+            padding: 0 5px;
+            border-radius: 5px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .key-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            min-width: 30px;
+        }
+
+        /* 반응형 */
+        @media (min-width: 600px) {
+            .cards-container {
+                flex-direction: row;
+            }
+            .card {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 화면 1: 시작 화면 -->
+        <div id="start-screen" class="screen active">
+            <div style="font-size: 4rem; margin-bottom: 20px;">🕵️‍♀️</div>
+            <h1>감정 탐정단 모집!</h1>
+            <p class="subtitle">AI와 사람의 마음을 구별할 수 있나요?</p>
+            
+            <div class="scenario-box">
+                <p>여러분의 친한 친구가<br>키우던 강아지 <strong>'뽀삐'</strong>가 무지개다리를 건너서<br>너무 슬퍼하고 있어요. 😢</p>
+            </div>
+            
+            <p style="font-size: 1.2rem;">두 개의 위로 편지가 도착했습니다.<br>어떤 것이 <strong>'진짜 사람 친구'</strong>의 편지일까요?</p>
+            <br>
+            <button class="btn" onclick="startGame()">탐정 활동 시작!</button>
+        </div>
+
+        <!-- 화면 2: 선택 화면 -->
+        <div id="quiz-screen" class="screen">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔍</div>
+            <h2>누가 진짜 사람 친구일까?</h2>
+            <p style="margin-bottom: 20px;">카드를 눌러서 선택해 주세요!</p>
+
+            <div class="cards-container">
+                <!-- 답변 A -->
+                <div class="card" onclick="showResult('A')">
+                    <div class="card-header">
+                        <span>💌 편지 A</span>
+                    </div>
+                    <div class="card-body">
+                        "세상에, 너무 마음이 아프겠다.<br>
+                        뽀삐는 너와 함께해서 정말 행복했을 거야.<br>
+                        <strong>슬플 때는 충분히 울어도 괜찮아.</strong><br>
+                        내가 언제든 네 이야기를 들어줄게.<br>
+                        기운 내!"
+                    </div>
+                </div>
+
+                <!-- 답변 B -->
+                <div class="card" onclick="showResult('B')">
+                    <div class="card-header">
+                        <span>💌 편지 B</span>
+                    </div>
+                    <div class="card-body">
+                        "나도 작년에 햄스터 보냈을 때<br>
+                        <strong>눈이 퉁퉁 붓도록 울었어.</strong><br>
+                        그 텅 빈 느낌 알지? ㅠㅠ<br>
+                        <strong>지금 당장 너희 집으로 갈게.</strong><br>
+                        같이 맛있는 거 먹자."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 화면 3: 결과 화면 (AI 선택 시) -->
+        <div id="result-ai-screen" class="screen">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🤖</div>
+            <div class="result-badge badge-ai">이 편지는 AI가 썼습니다!</div>
+            
+            <h3>"말은 완벽하지만, 무언가 빠져있어요."</h3>
+            <p>편지 A는 아주 따뜻하고 완벽한 위로의 말이에요.<br>하지만 AI는 슬픔을 '글자'로만 배웠어요.</p>
+
+            <div class="explanation-box">
+                <div class="key-point">
+                    <span class="key-icon">🤔</span>
+                    <div>
+                        <strong>왜 AI일까요?</strong><br>
+                        좋은 말이지만, 친구를 위해 <span class="highlight">직접 해줄 수 있는 행동</span>이 없어요.
+                    </div>
+                </div>
+            </div>
+            <br>
+            <button class="btn" onclick="retry()">다시 찾아보기</button>
+        </div>
+
+        <!-- 화면 4: 결과 화면 (사람 선택 시) -->
+        <div id="result-human-screen" class="screen">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🎉</div>
+            <div class="result-badge badge-human">정답! 진짜 사람 친구입니다!</div>
+            
+            <h3>"서툴러도 '경험'과 '행동'이 있어요."</h3>
+            <p>편지 B는 조금 투박할 수 있지만,<br>진짜 겪어본 사람만이 할 수 있는 말이 들어있어요.</p>
+
+            <div class="explanation-box">
+                <h4>🧐 감정 탐정의 분석 노트</h4>
+                <div class="key-point">
+                    <span class="key-icon">👀</span>
+                    <div>
+                        <strong>1. 몸의 기억 (감각)</strong><br>
+                        "눈이 퉁퉁 붓도록 울었다"는 건 <span class="highlight">몸으로 직접 겪은 아픔</span>을 기억한다는 뜻이에요. AI는 몸이 없어서 이런 느낌을 몰라요.
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="key-icon">🏃</span>
+                    <div>
+                        <strong>2. 함께하는 행동 (현실)</strong><br>
+                        "너희 집으로 갈게", "같이 먹자"처럼 <span class="highlight">현실에서 함께 해주는 것</span>은 오직 사람만 할 수 있어요.
+                    </div>
+                </div>
+            </div>
+            <br>
+            <button class="btn" onclick="location.reload()">처음으로</button>
+        </div>
+
+    </div>
+
+    <script>
+        // 화면 전환 함수
+        function showScreen(screenId) {
+            // 모든 화면 숨기기
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            
+            // 선택한 화면 보이기
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            showScreen('quiz-screen');
+        }
+
+        function showResult(choice) {
+            if (choice === 'A') {
+                showScreen('result-ai-screen');
+            } else {
+                showScreen('result-human-screen');
+            }
+        }
+
+        function retry() {
+            showScreen('quiz-screen');
+        }
+    </script>
+</body>
+</html>
