@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나는야 인간 확률 계산기</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Jua for cute, kid-friendly look) -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: #F0F9FF;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bar-fill {
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main Game Container -->
+    <div class="bg-white max-w-lg w-full rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-200 relative">
+        
+        <!-- Header -->
+        <div class="bg-blue-400 p-4 text-center">
+            <h1 class="text-2xl text-white drop-shadow-md flex items-center justify-center gap-2">
+                <i class="ph-fill ph-robot text-3xl"></i>
+                나는야 인간 확률 계산기
+            </h1>
+        </div>
+
+        <!-- Content Area -->
+        <div id="game-content" class="p-6 min-h-[450px] flex flex-col justify-center">
+            
+            <!-- Scene: Intro -->
+            <div id="scene-intro" class="text-center space-y-6 slide-up">
+                <div class="bg-blue-50 p-6 rounded-full w-40 h-40 mx-auto flex items-center justify-center border-4 border-blue-100">
+                    <i class="ph-duotone ph-brain text-6xl text-blue-500"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl text-gray-800 mb-2">안녕! 나는 AI 로봇이야.</h2>
+                    <p class="text-gray-600 text-lg leading-relaxed">
+                        나는 수백만 권의 책을 읽어서<br>
+                        사람들이 자주 쓰는 말버릇을 알고 있어.<br>
+                        나랑 같이 <strong>'다음에 올 단어'</strong>를 맞혀볼래?<br>
+                        <span class="text-sm text-blue-500 mt-2 block">(총 5문제를 풀어보자!)</span>
+                    </p>
+                </div>
+                <button onclick="startGame()" class="bg-blue-500 hover:bg-blue-600 text-white text-xl py-3 px-8 rounded-2xl transition transform hover:scale-105 shadow-lg w-full">
+                    좋아, 시작하자! 🚀
+                </button>
+            </div>
+
+            <!-- Scene: Question (Dynamic Content) -->
+            <div id="scene-question" class="hidden space-y-6 slide-up">
+                <div class="flex justify-between items-center text-gray-400 text-sm font-bold">
+                    <span>문제 <span id="q-current">1</span> / <span id="q-total">5</span></span>
+                    <span id="score-display" class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded-lg">점수: 0</span>
+                </div>
+
+                <div class="bg-yellow-100 p-6 rounded-xl border-2 border-yellow-300 text-center relative shadow-sm">
+                    <p id="q-text" class="text-2xl text-gray-800 mt-2 leading-relaxed">
+                        <!-- Question Text Goes Here -->
+                    </p>
+                </div>
+                
+                <p class="text-center text-gray-500">가장 많은 사람들이 쓸법한 말은?</p>
+                
+                <div id="options-container" class="grid grid-cols-1 gap-3">
+                    <!-- Options Buttons will be injected here -->
+                </div>
+            </div>
+
+            <!-- Scene: Result (Dynamic Content) -->
+            <div id="scene-result" class="hidden space-y-5 slide-up">
+                <div class="text-center">
+                    <h3 id="result-title" class="text-xl font-bold mb-1">AI의 분석 결과! 🧠</h3>
+                    <p id="result-subtitle" class="text-gray-500 text-sm">가장 높은 확률은 무엇일까요?</p>
+                </div>
+
+                <div id="bars-container" class="space-y-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <!-- Bars will be injected here -->
+                </div>
+
+                <div class="bg-blue-100 p-4 rounded-lg text-blue-800 text-sm leading-relaxed flex gap-3 items-start">
+                    <i class="ph-fill ph-lightbulb text-2xl text-yellow-500 flex-shrink-0"></i>
+                    <span id="explanation-text">
+                        <!-- Explanation goes here -->
+                    </span>
+                </div>
+
+                <button onclick="nextQuestion()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl shadow-md transition transform hover:scale-105">
+                    다음 문제로! 👉
+                </button>
+            </div>
+
+            <!-- Scene: Final Score -->
+            <div id="scene-final" class="hidden text-center space-y-6 slide-up">
+                <div class="bg-purple-100 p-6 rounded-full w-40 h-40 mx-auto flex items-center justify-center border-4 border-purple-200 animate-bounce">
+                    <span id="final-score-icon" class="text-6xl">🏆</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl text-gray-800 mb-2">모든 문제를 풀었어!</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center space-y-2">
+                        <p class="text-gray-500">나의 AI 싱크로율 점수는?</p>
+                        <p class="text-4xl text-blue-600 font-bold my-4">
+                            <span id="final-score-val">0</span> / 5
+                        </p>
+                        <p id="final-message" class="text-gray-700 text-lg">
+                            <!-- Final message -->
+                        </p>
+                    </div>
+                </div>
+                <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white text-xl py-3 px-8 rounded-2xl transition shadow-lg w-full">
+                    처음부터 다시 하기 🔄
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Game Data ---
+        const quizData = [
+            {
+                // Q1: Simple association (Modified as requested)
+                textPart1: "오늘 점심 급식은 정말",
+                textPart2: "???",
+                color: "blue",
+                options: [
+                    { text: "맛있다", icon: "😋", percent: 80, isTop: true },
+                    { text: "힘들다", icon: "💦", percent: 10, isTop: false },
+                    { text: "어렵다", icon: "🤔", percent: 5, isTop: false }
+                ],
+                explanation: "AI는 '급식' 뒤에 '맛있다'나 '맛없다' 같은 맛 표현이 올 확률이 높다고 계산해요. '힘들다'나 '어렵다'는 급식과 잘 안 어울리죠!"
+            },
+            {
+                // Q2: Context (Sad)
+                textPart1: "철수는 시험을 망쳤다. 그래서 기분이 정말",
+                textPart2: "???",
+                color: "purple",
+                options: [
+                    { text: "우울하다", icon: "😢", percent: 92, isTop: true },
+                    { text: "배고프다", icon: "🍔", percent: 5, isTop: false },
+                    { text: "신난다", icon: "😆", percent: 0.1, isTop: false }
+                ],
+                explanation: "앞에 '망쳤다'라는 말이 있어서 슬픈 감정이 올 확률이 아주 높아요. 이게 바로 '문맥'을 파악하는 방법입니다."
+            },
+            {
+                // Q3: Cause and Effect (Weather)
+                textPart1: "하늘에 먹구름이 잔뜩 꼈어. 곧 비가",
+                textPart2: "???",
+                color: "gray",
+                options: [
+                    { text: "올 것 같다", icon: "☔", percent: 85, isTop: true },
+                    { text: "그칠 거야", icon: "☀️", percent: 5, isTop: false },
+                    { text: "맛있을 거야", icon: "🍭", percent: 0, isTop: false }
+                ],
+                explanation: "'먹구름'은 '비'와 짝꿍 단어예요. AI는 수많은 날씨 예보 데이터에서 이 패턴을 배웠답니다."
+            },
+            {
+                // Q4: Social Context (Birthday)
+                textPart1: "생일 축하해! 이 선물은 너를 위해",
+                textPart2: "???",
+                color: "pink",
+                options: [
+                    { text: "준비했어", icon: "🎁", percent: 90, isTop: true },
+                    { text: "버렸어", icon: "🗑️", percent: 1, isTop: false },
+                    { text: "숨겼어", icon: "🫣", percent: 9, isTop: false }
+                ],
+                explanation: "축하하는 상황에서는 긍정적인 행동이 이어질 확률이 높죠. '버렸어' 같은 말은 생일 상황에서 거의 쓰지 않으니까요."
+            },
+            {
+                // Q5: Idiom/Fixed Phrase
+                textPart1: "옛날 옛적에 호랑이가 담배 피우던",
+                textPart2: "???",
+                color: "green",
+                options: [
+                    { text: "시절에", icon: "🐯", percent: 95, isTop: true },
+                    { text: "편의점에서", icon: "🏪", percent: 0.1, isTop: false },
+                    { text: "동물원에서", icon: "🦁", percent: 2, isTop: false }
+                ],
+                explanation: "이건 한국어의 관용구(자주 쓰는 표현)예요. AI는 이런 옛날 이야기 패턴도 통째로 외우고 있답니다."
+            }
+        ];
+
+        // --- Game State ---
+        let currentIdx = 0;
+        let score = 0;
+
+        // --- Functions ---
+
+        function startGame() {
+            currentIdx = 0;
+            score = 0;
+            document.getElementById('score-display').innerText = `점수: 0`;
+            showScene('scene-question');
+            renderQuestion();
+        }
+
+        function showScene(sceneId) {
+            const scenes = ['scene-intro', 'scene-question', 'scene-result', 'scene-final'];
+            scenes.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.add('hidden');
+                el.classList.remove('slide-up');
+            });
+            const target = document.getElementById(sceneId);
+            target.classList.remove('hidden');
+            void target.offsetWidth; // Trigger reflow
+            target.classList.add('slide-up');
+        }
+
+        function renderQuestion() {
+            const data = quizData[currentIdx];
+            
+            // Update Text
+            document.getElementById('q-current').innerText = currentIdx + 1;
+            document.getElementById('q-total').innerText = quizData.length;
+            
+            // Format Question Text with Highlight
+            const qHtml = `${data.textPart1} <span class="text-${data.color}-600 border-b-4 border-${data.color}-300 inline-block px-1">${data.textPart2}</span>`;
+            document.getElementById('q-text').innerHTML = qHtml;
+
+            // Generate Buttons
+            const container = document.getElementById('options-container');
+            container.innerHTML = ''; // clear
+
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `bg-white border-2 border-gray-200 hover:border-${data.color}-400 hover:bg-${data.color}-50 py-4 rounded-xl text-xl text-gray-700 transition flex items-center justify-center gap-2 shadow-sm`;
+                btn.innerHTML = `<span>${opt.icon}</span> ${opt.text}`;
+                btn.onclick = () => checkAnswer(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx) {
+            const data = quizData[currentIdx];
+            const isCorrect = data.options[selectedIdx].isTop;
+            
+            if (isCorrect) score++;
+            document.getElementById('score-display').innerText = `점수: ${score}`;
+
+            // Render Result Scene
+            showScene('scene-result');
+            
+            // Set Result Text
+            const titleEl = document.getElementById('result-title');
+            if (isCorrect) {
+                titleEl.innerHTML = "<span class='text-green-500'>딩동댕!</span> AI와 생각이 통했어요!";
+            } else {
+                titleEl.innerHTML = "<span class='text-orange-500'>아하!</span> AI는 다른 생각을 했네요.";
+            }
+
+            document.getElementById('explanation-text').innerText = data.explanation;
+
+            // Render Bars
+            const barsContainer = document.getElementById('bars-container');
+            barsContainer.innerHTML = ''; // clear
+
+            data.options.forEach(opt => {
+                const isSelected = (opt === data.options[selectedIdx]);
+                const barColor = opt.isTop ? `bg-${data.color}-500` : (isSelected ? 'bg-gray-600' : 'bg-gray-400');
+                const textColor = opt.isTop ? `text-${data.color}-600 font-bold` : 'text-gray-500';
+                
+                const barHtml = `
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-gray-700 ${isSelected ? 'font-bold underline' : ''}">${opt.icon} ${opt.text} ${isSelected ? '(선택)' : ''}</span>
+                            <span class="${textColor}">${opt.percent}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div class="${barColor} h-4 rounded-full bar-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                `;
+                barsContainer.insertAdjacentHTML('beforeend', barHtml);
+            });
+
+            // Animate Bars
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.bar-fill');
+                bars.forEach((bar, idx) => {
+                    bar.style.width = data.options[idx].percent + '%';
+                });
+            }, 100);
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < quizData.length) {
+                showScene('scene-question');
+                renderQuestion();
+            } else {
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            showScene('scene-final');
+            document.getElementById('final-score-val').innerText = score;
+            
+            const msgEl = document.getElementById('final-message');
+            const iconEl = document.getElementById('final-score-icon');
+            
+            if (score === 5) {
+                iconEl.innerText = "👑";
+                msgEl.innerHTML = "와우! 당신은 <strong class='text-blue-600'>완벽한 인간 지능</strong>이군요!<br>AI의 패턴을 완벽하게 파악했어요.";
+            } else if (score >= 3) {
+                iconEl.innerText = "🤖";
+                msgEl.innerHTML = "대단해요! AI의 마음을<br>거의 다 읽으셨네요.";
+            } else {
+                iconEl.innerText = "🎨";
+                msgEl.innerHTML = "당신은 뻔한 정답보다<br><strong>창의적인 생각</strong>을 하는 사람이군요!<br>(AI는 창의성을 어려워해요)";
+            }
+        }
+
+        // Start animation on load
+        window.onload = () => {
+             document.getElementById('scene-intro').classList.add('slide-up');
+        };
+
+    </script>
+</body>
+</html>
